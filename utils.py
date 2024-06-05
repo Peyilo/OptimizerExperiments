@@ -6,6 +6,8 @@ import threading
 import torch
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+env = "win"
+root = "/mnt/workspace/OptimizerExperiments/" if env == 'linux' else ""
 
 
 def train(net, optimizer, criterion, train_loader):
@@ -103,7 +105,7 @@ def now() -> str:
 
 
 def load_exp(name):
-    with open("./exp.json", "r", encoding="utf-8") as f:
+    with open(f"{root}exp.json", "r", encoding="utf-8") as f:
         exps = json.load(f)
         for exp in exps['exps']:
             if exp['name'] == name:
@@ -112,7 +114,7 @@ def load_exp(name):
 
 
 def write_exp(exp):
-    with open("./exp.json", "r", encoding="utf-8") as f:
+    with open(f"{root}exp.json", "r", encoding="utf-8") as f:
         exps = json.load(f)
         exist = False
         for i in exps['exps']:
@@ -125,7 +127,7 @@ def write_exp(exp):
         if not exist:
             exps['exps'].append(exp)
         exps['last_date'] = now()
-    with open("./exp.json", "w", encoding="utf-8") as f:
+    with open(f"{root}exp.json", "w", encoding="utf-8") as f:
         json.dump(exps, f, indent=2, ensure_ascii=False)
 
 
