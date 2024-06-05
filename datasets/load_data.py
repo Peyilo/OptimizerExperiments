@@ -1,6 +1,7 @@
 import torchvision.datasets as dsets
 from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
+from utils import root
 
 _classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
@@ -25,8 +26,8 @@ def get_label(i):
 def load_data(dataset='cifar10', batch_size=100):
     if dataset == 'cifar10':
         # 加载CIFAR10训练集和测试集
-        train_dataset = dsets.CIFAR10(root="datasets/files/", train=True, download=True, transform=transform_train)
-        test_dataset = dsets.CIFAR10(root="datasets/files/", train=False, download=True, transform=transform_test)
+        train_dataset = dsets.CIFAR10(root=f"{root}datasets/files/", train=True, download=True, transform=transform_train)
+        test_dataset = dsets.CIFAR10(root=f"{root}datasets/files/", train=False, download=True, transform=transform_test)
         train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
         test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
         return train_loader, test_loader
