@@ -60,6 +60,7 @@ class Timer:
     def start(self):
         self._start_time = time.time()
         self._last_time = self._start_time
+        self.iter_num = 0
 
     def iter(self, epoch, num_epochs):
         self.iter_num += 1

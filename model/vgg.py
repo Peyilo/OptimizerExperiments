@@ -126,5 +126,5 @@ def get_vgg19(num_classes=10, batch_norm=True):
 
 # from torchsummary import summary
 #
-# summary(get_vgg19(10), input_size=(3, 32, 32), device='cpu')
+# summary(get_vgg16(10), input_size=(3, 32, 32), device='cpu')
 

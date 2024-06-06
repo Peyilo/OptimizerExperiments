@@ -3,9 +3,9 @@
     {
       "name": "exp_adam_beta",
       "describe": "探讨Adam优化器的两个beta参数的影响",
-      "progress": "D1-M1-B4-E21",
-      "checkpoint": "./temp/exp_adam_beta/checkpoint"
+      "progress": "D1-M1-B5-E31",
+      "checkpoint": "temp/exp_adam_beta/checkpoint"
     }
   ],
-  "last_date": "2024-06-05 20:11:26"
+  "last_date": "2024-06-05 22:21:52"
 }
