@@ -42,6 +42,8 @@ def get_model(name):
         return get_vgg19(10, True)
     elif name == 'resnet18':
         return get_resnet18(10)
+    elif name == 'resnet18var':
+        return get_resnet18_var(10)
     else:
         raise 'Unknown model'
 
@@ -105,7 +107,7 @@ for dataset in datasets:
             print(f"> [Start] {model_name}, Adam, betas({betas[0]}, {betas[1]}), n_item({n_item[0]}, {n_item[1]})")
             for epoch in range(start_epoch, num_epochs + 1):
                 if listener.need_stop():
-                    path = f"{root}temp/{exp_name}/checkpoint"
+                    path = f"{root}data/{exp_name}/checkpoint"
                     checkpoint = {
                         "model_state_dict": net.state_dict(),
                         "optimizer_state_dict": optimizer.state_dict(),
@@ -135,8 +137,8 @@ for dataset in datasets:
 
             # 保存数据
             df = pd.DataFrame(result)
-            df.to_csv(f'{root}temp/{exp_name}/{model_name}_{dataset}_nitem=({n_item[0]}, {n_item[1]}).csv', index=False)
-            torch.save(net.state_dict(), f"{root}temp/{exp_name}/{model_name}_{dataset}_nitem=({n_item[0]}, {n_item[1]})_epoch{num_epochs}.pth")
+            df.to_csv(f'{root}data/{exp_name}/{model_name}_{dataset}_nitem=({n_item[0]}, {n_item[1]}).csv', index=False)
+            torch.save(net.state_dict(), f"{root}data/{exp_name}/{model_name}_{dataset}_nitem=({n_item[0]}, {n_item[1]})_epoch{num_epochs}.pth")
             B += 1
             E = 1
         M += 1

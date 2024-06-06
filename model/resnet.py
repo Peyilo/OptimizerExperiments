@@ -72,12 +72,48 @@ class ResNet18(nn.Module):
         return x
 
 
+class ResNet18Variant(nn.Module):
+
+    def __init__(self, num_classes=10):
+        super(ResNet18Variant, self).__init__()
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.relu = nn.ReLU(inplace=True)
+        self.conv2_x = _make_layer(64, 64, stride=1)
+        self.conv3_x = _make_layer(64, 128, stride=2)
+        self.conv4_x = _make_layer(128, 256, stride=2)
+        self.conv5_x = _make_layer(256, 512, stride=2)
+
+        self.avgpool = nn.AvgPool2d(kernel_size=4)
+        self.fc = nn.Linear(512, num_classes)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+
+        x = self.conv2_x(x)
+        x = self.conv3_x(x)
+        x = self.conv4_x(x)
+        x = self.conv5_x(x)  # output: 512*4*4
+
+        x = self.avgpool(x)  # output: 512*1*1
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
+
+
 def get_resnet18(num_classes=10):
     return ResNet18(num_classes=num_classes)
 
+
+def get_resnet18_var(num_classes=10):
+    return ResNet18Variant(num_classes=num_classes)
+
+
 # from torchsummary import summary
 #
-# summary(ResNet18(), (3, 32, 32), device='cpu')
+# summary(ResNet18Variant(), (3, 32, 32), device='cpu')
 
 """
 ================================================================
