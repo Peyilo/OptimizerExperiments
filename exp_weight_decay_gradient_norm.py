@@ -23,7 +23,7 @@ num_epochs = 200
 batch_size = 100
 
 timer = Timer()
-models = ['resnet18']
+models = ['vgg16', 'vgg16WithoutBN']
 datasets = ['cifar10']
 optimizers = ["adam"]
 weight_decays = [0, 1e-4, 5e-4, 1e-3]
@@ -37,6 +37,8 @@ def get_model(name):
         return get_vgg13(10, True)
     elif name == 'vgg16':
         return get_vgg16(10, True)
+    elif name == 'vgg16WithoutBN':
+        return get_vgg16(10, False)
     elif name == 'vgg19':
         return get_vgg19(10, True)
     elif name == 'resnet18':
@@ -87,6 +89,7 @@ for dataset in datasets:
                     train_loss, train_error = train(net, optimizer, criterion, train_loader)
                     gradient_norm = 0.0
                     squared_gradient_norm = 0.0
+
                     for p in net.parameters():
                         if p.grad is not None:
                             gradient_norm += p.grad.data.norm(2).item() ** 2

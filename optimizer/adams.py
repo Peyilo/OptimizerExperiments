@@ -24,6 +24,7 @@ class AdamS(Optimizer):
 
     def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8,
                  weight_decay=1e-4, amsgrad=False):
+        self.wd = 1
         if not 0.0 <= lr:
             raise ValueError("Invalid learning rate: {}".format(lr))
         if not 0.0 <= eps:
@@ -42,6 +43,9 @@ class AdamS(Optimizer):
         super(AdamS, self).__setstate__(state)
         for group in self.param_groups:
             group.setdefault('amsgrad', False)
+
+    def get_wd(self):
+        return self.wd
 
     @torch.no_grad()
     def step(self, closure=None):
@@ -106,7 +110,7 @@ class AdamS(Optimizer):
 
         # Calculate the sqrt of the mean of all elements in exp_avg_sq_hat  
         exp_avg_mean_sqrt = math.sqrt(exp_avg_sq_hat_sum / param_size)
-
+        self.wd = exp_avg_mean_sqrt
         for group in self.param_groups:
             for p in group['params']:
                 if p.grad is None:
