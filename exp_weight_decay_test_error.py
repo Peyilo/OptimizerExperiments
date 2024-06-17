@@ -18,7 +18,7 @@ exp_name = 'exp_weight_decay_test_error'
 describe = "探讨权重衰减强度的影响"
 
 
-lr = 1e-3
+lr = 0.01
 num_epochs = 200
 batch_size = 100
 
@@ -26,7 +26,7 @@ timer = Timer()
 models = ['resnet18']
 datasets = ['cifar10']
 optimizers = {
-    'direct_regular': [5e-6, 5e-5, 5e-4],
+    # 'direct_regular': [5e-6, 5e-5, 5e-4],
     'decoupled': [5e-4]
 }
 criterion = nn.CrossEntropyLoss(reduction='sum')
@@ -71,7 +71,8 @@ for dataset in datasets:
                 start_epoch = 1
                 result = {"train_loss": [], "train_error": [], "test_loss": [], "test_error": []}
                 optimizer = get_optimizer(name, net.parameters(), weight_decay)
-
+                lambda_lr = lambda epoch: 0.1 ** (epoch // 80)  # 控制学习率衰减，每过80个epoch，学习率衰减为之前的0.1倍
+                scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda_lr)  # 学习率调度器
                 timer.start()
                 print(f"> [Start] {model_name}, {dataset}, {name}, weight_decay: {weight_decay}")
                 for epoch in range(start_epoch, num_epochs + 1):
@@ -85,6 +86,7 @@ for dataset in datasets:
                     print("Training Loss: %.5f, Training Error: %.5f." % (train_loss, train_error))
                     print("Testing Loss: %.5f, Testing Error: %.5f." % (test_loss, test_error))
                     timer.iter(epoch, num_epochs)
+                    scheduler.step()
 
                 # 保存数据
                 df = pd.DataFrame(result)

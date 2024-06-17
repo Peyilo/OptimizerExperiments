@@ -19,13 +19,13 @@ describe = "探讨权重衰减强度的影响"
 
 
 lr = 1e-3
-num_epochs = 100
+num_epochs = 200
 batch_size = 100
 
 timer = Timer()
 models = ['resnet18']
 datasets = ['cifar10']
-optimizers = ["adam", "adamw", "sgd"]
+optimizers = ["adam"]
 weight_decays = [0, 1e-4, 5e-4, 1e-3]
 criterion = nn.CrossEntropyLoss(reduction='sum')
 
@@ -79,6 +79,8 @@ for dataset in datasets:
                 optimizer = get_optimizer(name, net.parameters(), weight_decay)
 
                 timer.start()
+                lambda_lr = lambda epoch: 0.1 ** (epoch // 80)  # 控制学习率衰减，每过80个epoch，学习率衰减为之前的0.1倍
+                scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda_lr)  # 学习率调度器
                 print(f"> [Start] {model_name}, {dataset}, {name}, weight_decay: {weight_decay}")
                 for epoch in range(start_epoch, num_epochs + 1):
                     print(f'[Epoch] {epoch} / {num_epochs}')
@@ -104,7 +106,7 @@ for dataset in datasets:
                     print("Testing Loss: %.5f, Testing Error: %.5f." % (test_loss, test_error))
                     print("gradient norm %.5f, squared gradient norm %.5f." % (gradient_norm, squared_gradient_norm))
                     timer.iter(epoch, num_epochs)
-
+                    scheduler.step()
                 # 保存数据
                 df = pd.DataFrame(result)
                 data_dir = f"{root}data/{exp_name}"
