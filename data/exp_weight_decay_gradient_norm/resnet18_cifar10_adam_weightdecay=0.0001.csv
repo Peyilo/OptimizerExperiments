@@ -1,0 +1,2 @@
+train_loss,train_error,test_loss,test_error,gradient_norm,squared_gradient_norm
+1.5430440934753418,0.56152,1.3969095153808593,0.5077,282.3996656960294,1299.036405317239

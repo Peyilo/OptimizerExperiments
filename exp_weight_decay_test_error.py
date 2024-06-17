@@ -4,7 +4,8 @@
 模型：vgg11、vgg16、resnet18、resnet34、googlelenet、densenet
 """
 import pandas as pd
-import optimizer.sgd as sgd
+import os
+import optimizer
 import torch
 import torch.optim as optim
 from torch.backends import cudnn
@@ -13,12 +14,12 @@ from datasets.load_data import load_data
 from model import *
 from utils import *
 
-exp_name = 'exp_weight_decay_lambda'
+exp_name = 'exp_weight_decay_test_error'
 describe = "探讨权重衰减强度的影响"
 
 
 lr = 1e-3
-num_epochs = 100
+num_epochs = 200
 batch_size = 100
 
 timer = Timer()
@@ -50,9 +51,9 @@ def get_model(name):
 
 def get_optimizer(name, params, weight_decay):
     if name == 'direct_regular':
-        return sgd.SGD(lr=lr, params=params, weight_decay=weight_decay, decoupled=False)
+        return optimizer.SGD(lr=lr, params=params, weight_decay=weight_decay, decoupled=False)
     elif name == 'decoupled':
-        return sgd.SGD(lr=lr, params=params, weight_decay=weight_decay, decoupled=True)
+        return optimizer.SGD(lr=lr, params=params, weight_decay=weight_decay, decoupled=True)
     else:
         raise 'Unknown'
 
@@ -87,4 +88,7 @@ for dataset in datasets:
 
                 # 保存数据
                 df = pd.DataFrame(result)
+                data_dir = f"{root}data/{exp_name}"
+                if not os.path.exists(data_dir):
+                    os.makedirs(data_dir)
                 df.to_csv(f'{root}data/{exp_name}/{model_name}_{dataset}_{name}_weightdecay={weight_decay}.csv', index=False)
