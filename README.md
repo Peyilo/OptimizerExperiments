@@ -1,7 +1,4 @@
-## README
+# README
 
+> 主要是对论文《On the Overlooked Pitfalls of Weight Decay and How to Mitigate Them: A Gradient-Norm Perspective》中的实验进行复现
 
-
-### 实验1：exp_adam_beta
-
-> 主要是探讨Adam算法中动量和自适应学习率对模型训练效果的影响

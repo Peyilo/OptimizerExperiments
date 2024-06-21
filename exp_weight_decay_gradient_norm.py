@@ -66,6 +66,15 @@ def get_optimizer(name, params, weight_decay):
         raise 'Unknown'
 
 
+def calculate_grad_norm(net):
+    total_norm = 0.
+    for p in net.parameters():
+        param_norm = p.grad.detach().data.norm(2)
+        total_norm += param_norm.item() ** 2
+    total_norm = total_norm ** 0.5
+    return total_norm
+
+
 for dataset in datasets:
     train_loader, test_loader = load_data(dataset=dataset, batch_size=batch_size)
     for model_name in models:
@@ -87,17 +96,19 @@ for dataset in datasets:
                 for epoch in range(start_epoch, num_epochs + 1):
                     print(f'[Epoch] {epoch} / {num_epochs}')
                     train_loss, train_error = train(net, optimizer, criterion, train_loader)
-                    gradient_norm = 0.0
-                    squared_gradient_norm = 0.0
 
-                    for p in net.parameters():
-                        if p.grad is not None:
-                            gradient_norm += p.grad.data.norm(2).item() ** 2
-                            squared_gradient_norm += (p.grad.data ** 2).norm(2).item() ** 2
-                    gradient_norm = gradient_norm ** 0.5
-                    squared_gradient_norm = squared_gradient_norm ** 0.5
+                    # gradient_norm = 0.0
+                    # squared_gradient_norm = 0.0
+                    # for p in net.parameters():
+                    #     if p.grad is not None:
+                    #         gradient_norm += p.grad.data.norm(2).item() ** 2
+                    #         squared_gradient_norm += (p.grad.data ** 2).norm(2).item() ** 2
+                    # gradient_norm = gradient_norm ** 0.5
+                    # print(gradient_norm)
+                    # squared_gradient_norm = squared_gradient_norm ** 0.5
+                    gradient_norm = calculate_grad_norm(net)
                     result['gradient_norm'].append(gradient_norm)
-                    result['squared_gradient_norm'].append(squared_gradient_norm)
+                    # result['squared_gradient_norm'].append(squared_gradient_norm)
 
                     test_loss, test_error = test(net, criterion, test_loader)
                     result['train_loss'].append(train_loss)
@@ -107,7 +118,8 @@ for dataset in datasets:
 
                     print("Training Loss: %.5f, Training Error: %.5f." % (train_loss, train_error))
                     print("Testing Loss: %.5f, Testing Error: %.5f." % (test_loss, test_error))
-                    print("gradient norm %.5f, squared gradient norm %.5f." % (gradient_norm, squared_gradient_norm))
+                    # print("gradient norm %.5f, squared gradient norm %.5f." % (gradient_norm, squared_gradient_norm))
+                    print("gradient norm %.5f." % gradient_norm)
                     timer.iter(epoch, num_epochs)
                     scheduler.step()
                 # 保存数据

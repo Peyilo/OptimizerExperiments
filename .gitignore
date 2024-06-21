@@ -1,6 +1,4 @@
 *.pth
-*.tar.gz
 __pycache__
 
-datasets/files
 .idea
